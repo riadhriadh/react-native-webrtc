@@ -17,7 +17,7 @@ class App extends Component {
   componentDidMount = () => {
 
     this.socket = io.connect(
-      'https://8aa7a006.ngrok.io/webrtcPeer',
+      'http://192.168.86.190:8080/webrtcPeer',
       {
         path: '/io/webrtc',
         query: {}
@@ -82,7 +82,7 @@ class App extends Component {
     // }
 
     this.pc.ontrack = (e) => {
-      debugger
+     
       this.remoteVideoref.current.srcObject = e.streams[0]
     }
 
@@ -102,7 +102,7 @@ class App extends Component {
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     // see the above link for more constraint options
     const constraints = {
-      // audio: true,
+       audio: true,
       video: true,
       // video: {
       //   width: 1280,
@@ -117,7 +117,7 @@ class App extends Component {
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    navigator.mediaDevices.getUserMedia(constraints)
+   navigator.mediaDevices.getUserMedia(constraints)
       .then(success)
       .catch(failure)
   }

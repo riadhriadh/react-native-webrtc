@@ -12,13 +12,17 @@ const port = 8080
 // app.get('/', (req, res) => res.send('Hello World!!!!!'))
 
 //https://expressjs.com/en/guide/writing-middleware.html
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(express.static(__dirname + '/build'))
 app.get('/', (req, res, next) => {
     res.sendFile(__dirname + '/build/index.html')
 })
 
 const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
 io.listen(server)
 
 // default namespace
@@ -45,6 +49,7 @@ peers.on('connection', socket => {
   })
 
   socket.on('offerOrAnswer', (data) => {
+    console.log("offerOrAnswer===>",data)
     // send to the other peer(s) if any
     for (const [socketID, socket] of connectedPeers.entries()) {
       // don't send to self

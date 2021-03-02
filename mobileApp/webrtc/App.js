@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import RNSwitchAudioOutput from 'react-native-switch-audio-output';
 
 import {
   RTCPeerConnection,
@@ -50,7 +51,7 @@ class App extends React.Component {
   componentDidMount = () => {
 
     this.socket = io.connect(
-      'https://8aa7a006.ngrok.io/webrtcPeer',
+      'http://192.168.86.190:8080/webrtcPeer',
       {
         path: '/io/webrtc',
         query: {}
@@ -70,21 +71,21 @@ class App extends React.Component {
     })
 
     this.socket.on('candidate', (candidate) => {
-      // console.log('From Peer... ', JSON.stringify(candidate))
+       console.log('From Peer... ', JSON.stringify(candidate))
       // this.candidates = [...this.candidates, candidate]
       this.pc.addIceCandidate(new RTCIceCandidate(candidate))
     })
 
     const pc_config = {
       "iceServers": [
-        // {
-        //   urls: 'stun:[STUN_IP]:[PORT]',
-        //   'credentials': '[YOR CREDENTIALS]',
-        //   'username': '[USERNAME]'
-        // },
         {
-          urls: 'stun:stun.l.google.com:19302'
+          urls: 'stun:192.168.86.190:8080',
+          'credentials': 'hello',
+          'username': 'riadh'
         }
+        // {
+        //   urls: 'stun:stun.l.google.com:19302'
+        // }
       ]
     }
 
@@ -105,7 +106,8 @@ class App extends React.Component {
     }
 
     this.pc.onaddstream = (e) => {
-      debugger
+     
+      
       // this.remoteVideoref.current.srcObject = e.streams[0]
       this.setState({
         remoteStream: e.stream
@@ -167,7 +169,7 @@ class App extends React.Component {
       // initiates the creation of SDP
       this.pc.createOffer({ offerToReceiveVideo: 1 })
         .then(sdp => {
-          // console.log(JSON.stringify(sdp))
+           console.log(JSON.stringify(sdp))
   
           // set offer sdp as local description
           this.pc.setLocalDescription(sdp)
@@ -217,7 +219,7 @@ class App extends React.Component {
       localStream,
       remoteStream,
     } = this.state
-
+console.log("remoteStream==>",remoteStream)
     const remoteVideo = remoteStream ?
       (
         <RTCView
@@ -252,7 +254,19 @@ class App extends React.Component {
                   <Text style={{ ...styles.textContent, }}>Answer</Text>
                 </View>
               </TouchableOpacity>
+
             </View>
+            <View style={{ flex: 1, }}>
+              <TouchableOpacity onPress={()=>{
+                RNSwitchAudioOutput.selectAudioOutput(RNSwitchAudioOutput.AUDIO_SPEAKER)
+              }}>
+                <View style={styles.button}>
+                  <Text style={{ ...styles.textContent, }}>change output</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+       
           </View>
           <View style={{ ...styles.videosContainer, }}>
           <View style={{
