@@ -5,13 +5,21 @@ import io from 'socket.io-client'
 class App extends Component {
   constructor(props) {
     super(props)
+    this.state = {
 
+      play: false,
+      pause: true
+
+    };
     // https://reactjs.org/docs/refs-and-the-dom.html
     this.localVideoref = React.createRef()
     this.remoteVideoref = React.createRef()
 
     this.socket = null
     this.candidates = []
+    this.url = "http://streaming.tdiradio.com:8000/house.mp3";
+    this.audio = new Audio("http://streaming.tdiradio.com:8000/house.mp3");
+
   }
 
   componentDidMount = () => {
@@ -29,7 +37,7 @@ class App extends Component {
     })
 
     this.socket.on('offerOrAnswer', (sdp) => {
-
+      console.log(JSON.stringify(sdp))
       this.textref.value = JSON.stringify(sdp)
 
       // set sdp as remote description
@@ -46,14 +54,14 @@ class App extends Component {
 
     const pc_config = {
       "iceServers": [
-        // {
-        //   urls: 'stun:[STUN_IP]:[PORT]',
-        //   'credentials': '[YOR CREDENTIALS]',
-        //   'username': '[USERNAME]'
-        // },
         {
-          urls : 'stun:stun.l.google.com:19302'
+          urls: 'stun:192.168.86.190:8080',
+          'credentials': 'helloo',
+          'username': 'riadh2'
         }
+        // {
+        //   urls : 'stun:stun.l.google.com:19302'
+        // }
       ]
     }
 
@@ -120,6 +128,9 @@ class App extends Component {
    navigator.mediaDevices.getUserMedia(constraints)
       .then(success)
       .catch(failure)
+
+
+     // this.audio.play()
   }
 
   sendToPeer = (messageType, payload) => {
@@ -138,7 +149,7 @@ class App extends Component {
     // initiates the creation of SDP
     this.pc.createOffer({ offerToReceiveVideo: 1 })
       .then(sdp => {
-        // console.log(JSON.stringify(sdp))
+         console.log(JSON.stringify(sdp))
 
         // set offer sdp as local description
         this.pc.setLocalDescription(sdp)
@@ -153,7 +164,7 @@ class App extends Component {
     console.log('Answer')
     this.pc.createAnswer({ offerToReceiveVideo: 1 })
       .then(sdp => {
-        // console.log(JSON.stringify(sdp))
+         console.log(JSON.stringify(sdp))
 
         // set answer sdp as local description
         this.pc.setLocalDescription(sdp)
